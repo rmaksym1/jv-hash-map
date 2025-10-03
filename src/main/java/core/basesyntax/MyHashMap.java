@@ -11,27 +11,34 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     private int capacity;
     private double loadFactor;
 
+    @SuppressWarnings("unchecked")
     public MyHashMap() {
-        buckets = new Node[DEFAULT_CAPACITY];
+        buckets = (Node<K,V>[]) new Node[DEFAULT_CAPACITY];
         size = 0;
         capacity = DEFAULT_CAPACITY;
         loadFactor = DEFAULT_LOAD_FACTOR;
     }
 
-    public int getBucketIndex(K key) {
-        return key == null ? 0 : Math.abs(key.hashCode() % buckets.length);
+    private int getBucketIndex(K key) {
+        if (key == null) {
+            return 0;
+        }
+        int hash = key.hashCode();
+        return (hash & 0x7FFFFFFF) % buckets.length;
     }
 
-    public void resize() {
+    @SuppressWarnings("unchecked")
+    private void resize() {
         int newCapacity = capacity * RESIZE_MULTIPLIER;;
-        Node<K, V>[] newBuckets = new Node[newCapacity];
+        Node<K, V>[] newBuckets = (Node<K,V>[]) new Node[newCapacity];
 
         for (Node<K, V> head : buckets) {
             Node<K, V> current = head;
             while (current != null) {
                 Node<K, V> next = current.next;
                 int newIndex = current.key == null
-                        ? 0 : Math.abs(current.key.hashCode() % newCapacity);
+                        ? 0
+                        : (current.key.hashCode() & 0x7FFFFFFF) % newCapacity;
 
                 current.next = newBuckets[newIndex];
                 newBuckets[newIndex] = current;
@@ -100,9 +107,10 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         private final K key;
         private Node<K, V> next;
 
-        Node(K key, V value, Node<K, V> next) {
+        private Node(K key, V value, Node<K, V> next) {
             this.key = key;
             this.value = value;
+            this.next = next;
         }
     }
 }
