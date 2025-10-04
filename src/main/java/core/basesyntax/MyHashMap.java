@@ -9,14 +9,12 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
     private Node<K, V>[] buckets;
     private int size = 0;
     private int capacity;
-    private double loadFactor;
 
     @SuppressWarnings("unchecked")
     public MyHashMap() {
         buckets = (Node<K,V>[]) new Node[DEFAULT_CAPACITY];
         size = 0;
         capacity = DEFAULT_CAPACITY;
-        loadFactor = DEFAULT_LOAD_FACTOR;
     }
 
     private int getBucketIndex(K key) {
@@ -57,7 +55,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         if (buckets[index] == null) {
             buckets[index] = new Node<>(key, value, null);
             size++;
-            if (size >= capacity * loadFactor) {
+            if (size >= capacity * DEFAULT_LOAD_FACTOR) {
                 resize();
             }
             return;
@@ -73,7 +71,7 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             if (current.next == null) {
                 current.next = new Node<>(key, value, null);
                 size++;
-                if (size >= capacity * loadFactor) {
+                if (size >= capacity * DEFAULT_LOAD_FACTOR) {
                     resize();
                 }
                 return;
